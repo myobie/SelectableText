@@ -12,6 +12,7 @@ import SwiftUI
 struct SelectableTextRepresentable: UIViewRepresentable {
     var text: String? = nil
     var attributedText: NSAttributedString? = nil
+    var menuBuilder: ((UIMenu) -> UIMenu)? = nil
     
     var maxLayoutWidth: CGFloat = .zero
     @Binding var layoutHeight: CGFloat
@@ -28,13 +29,17 @@ struct SelectableTextRepresentable: UIViewRepresentable {
         textView.textContainer.lineFragmentPadding = 0
         textView.adjustsFontForContentSizeCategory = true
         textView.maxLayoutWidth = self.maxLayoutWidth
-        
+
         if let text {
             textView.text = text
         }
-        
+
         if let attributedText {
             textView.attributedText = attributedText
+        }
+
+        if #available(iOS 16, *), let builder = menuBuilder {
+            textView.editMenuProvider = { suggested in builder(suggested) }
         }
         
         return textView

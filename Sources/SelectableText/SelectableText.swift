@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 ///  A view that displays one or more lines of read-only selectable text.
 ///
@@ -38,6 +41,9 @@ import SwiftUI
 public struct SelectableText: View {
     private var text: String? = nil
     private var attributedText: NSAttributedString? = nil
+#if canImport(UIKit)
+    private var menuBuilder: ((UIMenu) -> UIMenu)? = nil
+#endif
     
     @State private var layoutHeight: CGFloat = .zero
     
@@ -58,15 +64,36 @@ public struct SelectableText: View {
     public init(_ attributedText: NSAttributedString) {
         self.attributedText = attributedText
     }
+
+#if canImport(UIKit)
+    /// Applies a custom builder for the edit menu on iOS.
+    /// - Parameter builder: A closure that receives the system-suggested menu
+    ///   and returns a new menu to display.
+    public func editMenu(_ builder: @escaping (UIMenu) -> UIMenu) -> SelectableText {
+        var copy = self
+        copy.menuBuilder = builder
+        return copy
+    }
+#endif
     
     public var body: some View {
         GeometryReader { proxy in
+#if canImport(UIKit)
+            SelectableTextRepresentable(
+                text: text,
+                attributedText: attributedText,
+                maxLayoutWidth: proxy.maxWidth,
+                layoutHeight: $layoutHeight,
+                menuBuilder: menuBuilder
+            )
+#else
             SelectableTextRepresentable(
                 text: text,
                 attributedText: attributedText,
                 maxLayoutWidth: proxy.maxWidth,
                 layoutHeight: $layoutHeight
             )
+#endif
         }
         .frame(height: layoutHeight)
     }
