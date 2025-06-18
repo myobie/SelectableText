@@ -8,14 +8,21 @@ A view that displays one or more lines of read-only selectable text.
 
 ### Custom Edit Menu
 
-Use ``editMenu(_:)`` on iOS 16+ to customize the system edit menu:
+Use ``editMenu(_:)`` on iOS 16+ and macOS 14+ to customize the system edit menu:
 
 ```swift
+// UIKit
 SelectableText(AttributedString("Hello **world**"))
-    .editMenu { suggested in
-        UIMenu(children: [
-            UIAction(title: "Share") { _ in share() },
-            suggested
-        ])
+    .editMenu { suggested, _textView in
+        UIMenu(children: [UIAction(title: "Share") { _ in share() }] + suggested)
+    }
+```
+
+```swift
+// AppKit
+SelectableText(AttributedString("Hello **world**"))
+    .editMenu { menu, _textView in
+        menu.addItem("Share") { share() }
+        return menu
     }
 ```

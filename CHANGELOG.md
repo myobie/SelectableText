@@ -4,4 +4,4 @@ Initial release
 
 # 1.1.0
 
-- Added `editMenu(_:)` modifier to customize the iOS edit menu.
+- Added `editMenu(_:)` modifier to customize the context menu when selecting text.

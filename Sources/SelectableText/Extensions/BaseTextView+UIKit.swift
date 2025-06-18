@@ -8,6 +8,20 @@
 #if canImport(UIKit)
 import SwiftUI
 
+final class MenuCoordinator: NSObject, UITextViewDelegate {
+    let build: ([UIMenuElement], UITextView) -> UIMenu
+
+    init(build: @escaping ([UIMenuElement], UITextView) -> UIMenu) {
+        self.build = build
+    }
+
+    func textView(_ textView: UITextView,
+                  editMenuForTextIn range: NSRange,
+                  suggestedActions: [UIMenuElement]) -> UIMenu? {
+        build(suggestedActions, textView)
+    }
+}
+
 class BaseTextView: UITextView {
     var maxLayoutWidth: CGFloat = 0 {
         didSet {
