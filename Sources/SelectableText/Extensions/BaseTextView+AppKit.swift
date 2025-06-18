@@ -8,6 +8,23 @@
 #if canImport(AppKit)
 import SwiftUI
 
+final class MenuCoordinator: NSObject, NSTextViewDelegate {
+    let build: (NSMenu, NSTextView) -> NSMenu
+  
+    init(build: @escaping (NSMenu, NSTextView) -> NSMenu) {
+        self.build = build
+    }
+    
+    func textView(_ textView: NSTextView,
+                  menu: NSMenu,
+                  for event: NSEvent,
+                  at charIndex: Int) -> NSMenu? {
+        return build(menu, textView)
+    }
+
+    @objc private func duplicate(_ sender: Any?) { /* … */ }
+}
+
 class BaseTextView: NSTextView {
     var maxLayoutWidth: CGFloat = 0 {
         didSet {

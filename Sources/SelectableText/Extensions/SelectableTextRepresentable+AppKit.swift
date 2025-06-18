@@ -12,9 +12,20 @@ import SwiftUI
 struct SelectableTextRepresentable: NSViewRepresentable {
     var text: String? = nil
     var attributedText: NSAttributedString? = nil
+    var menuBuilder: ((NSMenu, NSTextView) -> NSMenu)? = nil
     
     var maxLayoutWidth: CGFloat = .zero
     @Binding var layoutHeight: CGFloat
+  
+  func makeCoordinator() -> MenuCoordinator {
+        MenuCoordinator { menu, textView in
+            if let menuBuilder = menuBuilder {
+                return menuBuilder(menu, textView)
+            } else {
+                return menu
+            }
+        }
+    }
     
     func makeNSView(context: Context) -> NSTextView {
         let textView = BaseTextView()
@@ -34,6 +45,10 @@ struct SelectableTextRepresentable: NSViewRepresentable {
         if let attributedText {
             textView.isRichText = true
             textView.textStorage?.setAttributedString(attributedText)
+        }
+      
+        if menuBuilder != nil {
+            textView.delegate = context.coordinator
         }
         
         return textView

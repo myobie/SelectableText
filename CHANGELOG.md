@@ -1,3 +1,7 @@
 # 1.0.0
 
 Initial release
+
+# 1.1.0
+
+- Added `editMenu(_:)` modifier to customize the context menu when selecting text.
